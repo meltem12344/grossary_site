@@ -1,0 +1,58 @@
+@model List<Order>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Siparişler";
+}
+
+<h1 class="h5 mb-3">Tüm Siparişler</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz sipariş yok.</div>
+}
+
+@foreach (var order in Model)
+{
+    <div class="fresh-card mb-3">
+        <div class="d-flex justify-content-between">
+            <strong>Sipariş #@order.Id</strong>
+            <span>@order.TotalPrice.ToString("0.00") TL</span>
+        </div>
+        <div class="text-muted small mb-2">
+            @order.AppUser?.FullName - @order.OrderDate.ToString("dd.MM.yyyy HH:mm")
+        </div>
+        <table class="fresh-table">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Kilo / Adet</th>
+                    <th>Fiyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.Product?.Name</td>
+                        <td>@item.Quantity @GetUnit(item.Product)</td>
+                        <td>@item.Price.ToString("0.00") TL / @GetUnit(item.Product)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@functions {
+    string GetUnit(Product? product)
+    {
+        if (product?.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
+            product?.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "kg";
+        }
+
+        return "adet";
+    }
+}

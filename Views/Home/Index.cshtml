@@ -1,0 +1,96 @@
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    var cartText = Context.Session.GetString("UserName") == null ? "Sepet" : "Sepet";
+    var searchText = ViewBag.SearchText as string;
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+}
+
+<section class="fresh-panel">
+    <div class="panel-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h1 class="h3 mb-1">FreshMart Ürünleri</h1>
+                <p class="text-muted mb-0">Taze ürünleri seç, sepetine ekle.</p>
+            </div>
+            <a class="btn-soft" asp-controller="Cart" asp-action="Index">@cartText</a>
+        </div>
+
+        <form class="search-row" method="get">
+            <input name="q" value="@searchText" placeholder="Ürün veya kategori ara..." />
+            <button class="btn-fresh" type="submit">Ara</button>
+        </form>
+
+        <div class="chip-row">
+            <a class="chip text-decoration-none" asp-action="Index">Tümü</a>
+            @foreach (var category in categories)
+            {
+                <a class="chip text-decoration-none" asp-action="Index" asp-route-q="@category.Name">@category.Name</a>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">Aramanıza uygun ürün bulunamadı.</div>
+        }
+
+        <div class="product-grid">
+            @foreach (var product in Model)
+            {
+                var artClass = GetArtClass(product);
+                <article class="fresh-card">
+                    <div class="product-art @artClass">@GetIcon(product)</div>
+                    <span class="mini-label">@GetBadge(product)</span>
+                    <div class="product-title">@product.Name</div>
+                    <div class="small text-muted">@product.Price.ToString("0.00") TL / @GetUnit(product)</div>
+                    <div class="d-grid gap-2 mt-3">
+                        <a class="btn-outline-fresh text-center" asp-action="Details" asp-route-id="@product.Id">Detay</a>
+                        <form asp-controller="Cart" asp-action="Add" method="post">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <button type="submit" class="btn-soft w-100">+ Sepete Ekle</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@functions {
+    string GetIcon(Product product)
+    {
+        if (product.Name.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
+        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
+        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
+        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
+        return "🛒";
+    }
+
+    string GetArtClass(Product product)
+    {
+        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "art-blue";
+        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "art-orange";
+        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "art-gray";
+        return "art-green";
+    }
+
+    string GetBadge(Product product)
+    {
+        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "Günlük";
+        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "İndirim";
+        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "Fırından";
+        return "Taze";
+    }
+
+    string GetUnit(Product product)
+    {
+        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
+            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "kg";
+        }
+
+        return "adet";
+    }
+}

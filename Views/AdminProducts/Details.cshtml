@@ -1,0 +1,40 @@
+@model Product
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Ürün Detay";
+}
+
+<div class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Ürünlere Dön</a>
+        <strong>Ürün Detay</strong>
+    </div>
+    <div class="panel-body">
+        <div class="detail-grid">
+            <div class="detail-art">🍏</div>
+            <div>
+                <span class="mini-label">@Model.Category?.Name</span>
+                <h1 class="h3 mt-2">@Model.Name</h1>
+                <p>@Model.Description</p>
+                <p><strong>Fiyat:</strong> @Model.Price.ToString("0.00") TL / @GetUnit(Model)</p>
+                <p><strong>Stok:</strong> @Model.Stock @GetUnit(Model)</p>
+                <a class="btn-fresh" asp-action="Edit" asp-route-id="@Model.Id">Düzenle</a>
+                <a class="btn-outline-fresh" asp-action="Index">Geri Dön</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetUnit(Product product)
+    {
+        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
+            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "kg";
+        }
+
+        return "adet";
+    }
+}

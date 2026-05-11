@@ -1,0 +1,24 @@
+@model Product
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Ürün Sil";
+}
+
+<div class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Ürünlere Dön</a>
+        <strong>Ürün Sil</strong>
+    </div>
+    <div class="panel-body">
+        <div class="form-box">
+            <h1 class="h5">Ürün Sil</h1>
+            <p><strong>@Model.Name</strong> ürününü silmek istiyor musunuz?</p>
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                <a class="btn-outline-fresh" asp-action="Index">Vazgeç</a>
+            </form>
+        </div>
+    </div>
+</div>

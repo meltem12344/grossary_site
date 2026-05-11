@@ -1,0 +1,26 @@
+@model Category
+
+@{
+    Layout = Context.Session.GetString("Role") == "Admin" ? "_AdminLayout" : "_UserLayout";
+    ViewData["Title"] = "Kategori Detay";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Kategorilere Dön</a>
+        <strong>@Model.Name</strong>
+    </div>
+    <div class="panel-body">
+        <div class="product-grid">
+            @foreach (var product in Model.Products)
+            {
+                <article class="fresh-card">
+                    <div class="product-art art-green">🥬</div>
+                    <div class="product-title">@product.Name</div>
+                    <div class="product-price">@product.Price.ToString("0.00") TL</div>
+                    <a class="btn-soft d-block text-center" asp-controller="Home" asp-action="Details" asp-route-id="@product.Id">Ürün Detay</a>
+                </article>
+            }
+        </div>
+    </div>
+</section>

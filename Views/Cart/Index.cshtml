@@ -1,0 +1,83 @@
+@model CartViewModel
+
+@{
+    ViewData["Title"] = "Sepet";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-controller="Home" asp-action="Index">FreshMart</a>
+        <strong>Sepetim</strong>
+    </div>
+
+    <div class="panel-body">
+        @if (!Model.Items.Any())
+        {
+            <div class="alert alert-info mb-0">Sepetiniz boş.</div>
+        }
+        else
+        {
+            <div class="cart-layout">
+                <div>
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="cart-row">
+                            <div>
+                                <span class="cart-mini-art art-green">@GetIcon(item.ProductName)</span>
+                                <strong>@item.ProductName</strong><br />
+                                <span class="small text-muted">@item.Price.ToString("0.00") TL / @item.Unit</span>
+                            </div>
+
+                            <div class="qty-control">
+                                <form asp-action="Decrease" method="post">
+                                    <input type="hidden" name="id" value="@item.CartItemId" />
+                                    <button class="btn btn-sm p-0" type="submit">−</button>
+                                </form>
+                                <span>@item.Quantity @item.Unit</span>
+                                <form asp-action="Increase" method="post">
+                                    <input type="hidden" name="id" value="@item.CartItemId" />
+                                    <button class="btn btn-sm p-0" type="submit">+</button>
+                                </form>
+                            </div>
+
+                            <strong>@item.LineTotal.ToString("0.00") TL</strong>
+
+                            <form asp-action="Remove" method="post">
+                                <input type="hidden" name="id" value="@item.CartItemId" />
+                                <button class="btn btn-sm text-danger" type="submit">Sil</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+
+                <aside class="summary-box">
+                    <h2 class="h5">Sipariş Özeti</h2>
+                    <div class="summary-line">
+                        <span>Ara toplam</span>
+                        <strong>@Model.TotalPrice.ToString("0.00") TL</strong>
+                    </div>
+                    <div class="summary-line">
+                        <span>Teslimat</span>
+                        <strong>Ücretsiz</strong>
+                    </div>
+                    <div class="summary-line">
+                        <span>Toplam</span>
+                        <strong>@Model.TotalPrice.ToString("0.00") TL</strong>
+                    </div>
+                    <a class="btn-fresh w-100 text-center mt-3" asp-action="Checkout">Siparişi Onayla</a>
+                </aside>
+            </div>
+        }
+    </div>
+</section>
+
+@functions {
+    string GetIcon(string productName)
+    {
+        if (productName.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
+        if (productName.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
+        if (productName.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
+        if (productName.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
+        return "🛒";
+    }
+}

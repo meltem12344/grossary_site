@@ -1,0 +1,55 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-controller="Home" asp-action="Index">FreshMart</a>
+        <a class="cart-pill" asp-action="Login">Girişe Dön</a>
+    </div>
+    <div class="panel-body">
+        <div class="form-box">
+            <h1 class="h4 mb-3">Hesap Oluştur</h1>
+
+            <form asp-action="Register" method="post">
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label">Ad Soyad</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Ahmet Yılmaz" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">E-posta</label>
+                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Phone" class="form-label">Telefon</label>
+                    <input asp-for="Phone" class="form-control" placeholder="0555 123 45 67" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label">Adres</label>
+                    <textarea asp-for="Address" class="form-control" rows="3" placeholder="Mahalle, cadde, sokak, bina no..."></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Şifre</label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-fresh w-100">Kayıt Ol</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

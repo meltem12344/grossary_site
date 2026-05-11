@@ -1,0 +1,68 @@
+@model List<Order>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="h5 mb-3">Dashboard</h1>
+
+<div class="stat-grid mb-4">
+    <div class="stat-box">
+        <span>Toplam Ürün</span>
+        <strong>@ViewBag.ProductCount</strong>
+    </div>
+    <div class="stat-box blue">
+        <span>Bugünkü Sipariş</span>
+        <strong>@ViewBag.OrderCount</strong>
+    </div>
+    <div class="stat-box orange">
+        <span>Günlük Gelir</span>
+        <strong>₺280</strong>
+    </div>
+    <div class="stat-box pink">
+        <span>Kayıtlı Üye</span>
+        <strong>@ViewBag.UserCount</strong>
+    </div>
+</div>
+
+<h2 class="h6">Son Siparişler</h2>
+<table class="fresh-table">
+    <thead>
+        <tr>
+            <th>Müşteri</th>
+            <th>Tarih</th>
+            <th>Tutar</th>
+            <th>Durum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td>Ahmet Yılmaz</td>
+                <td>@DateTime.Now.ToString("dd.MM.yyyy")</td>
+                <td>245 TL</td>
+                <td><span class="mini-label">Teslim</span></td>
+            </tr>
+            <tr>
+                <td>Ayşe Kaya</td>
+                <td>@DateTime.Now.ToString("dd.MM.yyyy")</td>
+                <td>180 TL</td>
+                <td><span class="mini-label">Hazırlanıyor</span></td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.AppUser?.FullName</td>
+                    <td>@order.OrderDate.ToString("dd.MM.yyyy")</td>
+                    <td>@order.TotalPrice.ToString("0.00") TL</td>
+                    <td><span class="mini-label">Teslim</span></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

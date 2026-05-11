@@ -1,0 +1,109 @@
+@model Product
+
+@{
+    ViewData["Title"] = "Ürün Detay";
+    var unit = GetUnit(Model);
+    var amountLabel = unit == "kg" ? "Kilo" : "Adet";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Ürünlere Dön</a>
+        <strong>FreshMart</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="detail-grid">
+            <div class="detail-image-wrap">
+                <div class="detail-art">@GetIcon(Model)</div>
+            </div>
+
+            <div>
+                <span class="mini-label">@Model.Category?.Name</span>
+                <h1 class="h3 mt-2">@Model.Name</h1>
+                <p class="text-muted">@Model.Description</p>
+
+                <div class="d-flex align-items-center gap-3">
+                    <h2 class="h3 text-success mb-0">@Model.Price.ToString("0.00") TL / @unit</h2>
+                    <span class="mini-label">%15 indirim</span>
+                </div>
+
+                <div class="info-box">
+                    <div>
+                        <strong>Stok durumu</strong><br />
+                        <span>Mevcut</span>
+                    </div>
+                    <div class="text-end">
+                        <strong>Stokta var (@Model.Stock @unit)</strong><br />
+                        <span>@Model.Category?.Name</span>
+                    </div>
+                </div>
+
+                <form asp-controller="Cart" asp-action="Add" method="post">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input id="quantityInput" type="hidden" name="quantity" value="1" />
+
+                    <div class="mb-3">
+                        <span class="me-2 fw-bold">@amountLabel:</span>
+                        <span class="qty-control">
+                            <button id="decreaseQuantity" class="btn btn-sm p-0" type="button">−</button>
+                            <span id="quantityText">1</span>
+                            <span>@unit</span>
+                            <button id="increaseQuantity" class="btn btn-sm p-0" type="button">+</button>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn-fresh w-100">Sepete Ekle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const quantityInput = document.getElementById('quantityInput');
+        const quantityText = document.getElementById('quantityText');
+        const maxStock = @Model.Stock;
+
+        document.getElementById('increaseQuantity').addEventListener('click', function () {
+            let value = parseInt(quantityInput.value);
+            if (value < maxStock) {
+                value++;
+                quantityInput.value = value;
+                quantityText.textContent = value;
+            }
+        });
+
+        document.getElementById('decreaseQuantity').addEventListener('click', function () {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                value--;
+                quantityInput.value = value;
+                quantityText.textContent = value;
+            }
+        });
+    </script>
+}
+
+@functions {
+    string GetIcon(Product product)
+    {
+        if (product.Name.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
+        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
+        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
+        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
+        return "🛒";
+    }
+
+    string GetUnit(Product product)
+    {
+        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
+            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "kg";
+        }
+
+        return "adet";
+    }
+}

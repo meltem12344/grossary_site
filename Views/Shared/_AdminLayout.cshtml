@@ -1,0 +1,46 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FreshMart Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <h4>FreshMart</h4>
+            <small>Admin Panel</small>
+            <a class="@(currentController == "Admin" && currentAction == "Index" ? "active" : "")" asp-controller="Admin" asp-action="Index">Dashboard</a>
+            <a class="@(currentController == "AdminProducts" ? "active" : "")" asp-controller="AdminProducts" asp-action="Index">Ürünler</a>
+            <a class="@(currentController == "Categories" ? "active" : "")" asp-controller="Categories" asp-action="Index">Kategoriler</a>
+            <a class="@(currentController == "Admin" && currentAction == "Orders" ? "active" : "")" asp-controller="Admin" asp-action="Orders">Siparişler</a>
+            <a asp-controller="Home" asp-action="Index">Siteye Dön</a>
+            <a asp-controller="Account" asp-action="Logout">Çıkış</a>
+        </aside>
+
+        <main class="admin-content">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,60 @@
+@model LoginViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Giriş";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshMart - Giriş</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <main class="auth-page">
+        <div class="auth-box">
+            <div class="brand-icon">🛒</div>
+            <h1 class="h4 text-center mb-1">FreshMart</h1>
+            <p class="text-center text-muted mb-4">E-posta adresinizle giriş yapın</p>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">E-posta</label>
+                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Şifre</label>
+                    <input asp-for="Password" class="form-control" placeholder="123" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-fresh w-100">Giriş Yap</button>
+            </form>
+
+            <hr class="my-4" />
+
+            <div class="text-center">
+                <p class="fw-bold mb-2">Hesabın yok mu?</p>
+                <a class="btn-outline-fresh d-block" asp-controller="Account" asp-action="Register">Hesap Oluştur</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
