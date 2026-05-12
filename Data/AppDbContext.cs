@@ -50,6 +50,17 @@ public class AppDbContext : DbContext
                 Phone = "0555 000 00 02",
                 Address = "Örnek mahalle, örnek sokak",
                 Role = "User"
+            },
+            new AppUser
+            {
+                Id = 10,
+                UserName = "ahmetyilmaz",
+                Email = "ahmetyilmaz@gmail.com",
+                Password = "123456",
+                FullName = "Ahmet Yılmaz",
+                Phone = "05461825011",
+                Address = "Düzce Orhangazi mahallesi",
+                Role = "User"
             }
         );
 
