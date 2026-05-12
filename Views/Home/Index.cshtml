@@ -2,23 +2,25 @@
 
 @{
     ViewData["Title"] = "Ana Sayfa";
-    var cartText = Context.Session.GetString("UserName") == null ? "Sepet" : "Sepet";
+    var cartText = "Sepet";
     var searchText = ViewBag.SearchText as string;
     var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var fruits = Model.Where(x => x.Category?.Name == "Meyve").ToList();
+    var vegetables = Model.Where(x => x.Category?.Name == "Sebze").ToList();
 }
 
 <section class="fresh-panel">
     <div class="panel-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h1 class="h3 mb-1">FreshMart Ürünleri</h1>
-                <p class="text-muted mb-0">Taze ürünleri seç, sepetine ekle.</p>
+                <h1 class="h3 mb-1">FreshMart Meyve Sebze</h1>
+                <p class="text-muted mb-0">Taze meyve ve sebzeleri seç, sepetine kilo ile ekle.</p>
             </div>
             <a class="btn-soft" asp-controller="Cart" asp-action="Index">@cartText</a>
         </div>
 
         <form class="search-row" method="get">
-            <input name="q" value="@searchText" placeholder="Ürün veya kategori ara..." />
+            <input name="q" value="@searchText" placeholder="Meyve veya sebze ara..." />
             <button class="btn-fresh" type="submit">Ara</button>
         </form>
 
@@ -35,62 +37,66 @@
             <div class="alert alert-info">Aramanıza uygun ürün bulunamadı.</div>
         }
 
-        <div class="product-grid">
-            @foreach (var product in Model)
+        <div class="catalog-split">
+            @if (fruits.Any())
             {
-                var artClass = GetArtClass(product);
-                <article class="fresh-card">
-                    <div class="product-art @artClass">@GetIcon(product)</div>
-                    <span class="mini-label">@GetBadge(product)</span>
-                    <div class="product-title">@product.Name</div>
-                    <div class="small text-muted">@product.Price.ToString("0.00") TL / @GetUnit(product)</div>
-                    <div class="d-grid gap-2 mt-3">
-                        <a class="btn-outline-fresh text-center" asp-action="Details" asp-route-id="@product.Id">Detay</a>
-                        <form asp-controller="Cart" asp-action="Add" method="post">
-                            <input type="hidden" name="productId" value="@product.Id" />
-                            <button type="submit" class="btn-soft w-100">+ Sepete Ekle</button>
-                        </form>
+                <section class="product-section">
+                    <div class="section-heading">
+                        <h2>Meyveler</h2>
+                        <span>@fruits.Count ürün</span>
                     </div>
-                </article>
+                    <div class="product-grid">
+                        @foreach (var product in fruits)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
+                </section>
+            }
+
+            @if (vegetables.Any())
+            {
+                <section class="product-section">
+                    <div class="section-heading">
+                        <h2>Sebzeler</h2>
+                        <span>@vegetables.Count ürün</span>
+                    </div>
+                    <div class="product-grid">
+                        @foreach (var product in vegetables)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
+                </section>
             }
         </div>
     </div>
 </section>
 
-@functions {
-    string GetIcon(Product product)
-    {
-        if (product.Name.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
-        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
-        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
-        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
-        return "🛒";
-    }
+@section Scripts {
+    <script>
+        document.querySelectorAll('.product-add-form').forEach(function (form) {
+            const quantityInput = form.querySelector('.product-quantity');
+            const quantityText = form.querySelector('.qty-value');
+            const maxStock = parseInt(form.querySelector('.card-qty-control').dataset.max);
 
-    string GetArtClass(Product product)
-    {
-        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "art-blue";
-        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "art-orange";
-        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "art-gray";
-        return "art-green";
-    }
+            form.querySelector('.qty-plus').addEventListener('click', function () {
+                let value = parseInt(quantityInput.value);
+                if (value < maxStock) {
+                    value++;
+                    quantityInput.value = value;
+                    quantityText.textContent = value;
+                }
+            });
 
-    string GetBadge(Product product)
-    {
-        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "Günlük";
-        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "İndirim";
-        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "Fırından";
-        return "Taze";
-    }
-
-    string GetUnit(Product product)
-    {
-        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
-            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return "kg";
-        }
-
-        return "adet";
-    }
+            form.querySelector('.qty-minus').addEventListener('click', function () {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    value--;
+                    quantityInput.value = value;
+                    quantityText.textContent = value;
+                }
+            });
+        });
+    </script>
 }

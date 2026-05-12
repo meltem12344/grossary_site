@@ -19,7 +19,15 @@
         <div class="auth-box">
             <div class="brand-icon">🛒</div>
             <h1 class="h4 text-center mb-1">FreshMart</h1>
-            <p class="text-center text-muted mb-4">E-posta adresinizle giriş yapın</p>
+            <p class="text-center text-muted mb-3">E-posta adresinizle giriş yapın</p>
+
+            <button id="adminLoginButton" class="btn-soft w-100 mb-3" type="button">
+                Admin Panel Girişi
+            </button>
+
+            <div class="small text-muted text-center mb-3">
+                Admin için: admin@freshmart.com / 123
+            </div>
 
             @if (TempData["Success"] != null)
             {
@@ -56,5 +64,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        document.getElementById('adminLoginButton').addEventListener('click', function () {
+            document.getElementById('Email').value = 'admin@freshmart.com';
+            document.getElementById('Password').value = '123';
+        });
+    </script>
 </body>
 </html>

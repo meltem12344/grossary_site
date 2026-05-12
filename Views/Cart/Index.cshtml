@@ -23,7 +23,9 @@
                     {
                         <div class="cart-row">
                             <div>
-                                <span class="cart-mini-art art-green">@GetIcon(item.ProductName)</span>
+                                <span class="cart-mini-art art-green">
+                                    <img src="@ProductImageHelper.GetImage(item.ProductName, item.ImageUrl)" alt="@item.ProductName" />
+                                </span>
                                 <strong>@item.ProductName</strong><br />
                                 <span class="small text-muted">@item.Price.ToString("0.00") TL / @item.Unit</span>
                             </div>
@@ -31,7 +33,7 @@
                             <div class="qty-control">
                                 <form asp-action="Decrease" method="post">
                                     <input type="hidden" name="id" value="@item.CartItemId" />
-                                    <button class="btn btn-sm p-0" type="submit">−</button>
+                                    <button class="btn btn-sm p-0" type="submit">-</button>
                                 </form>
                                 <span>@item.Quantity @item.Unit</span>
                                 <form asp-action="Increase" method="post">
@@ -70,14 +72,3 @@
         }
     </div>
 </section>
-
-@functions {
-    string GetIcon(string productName)
-    {
-        if (productName.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
-        if (productName.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
-        if (productName.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
-        if (productName.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
-        return "🛒";
-    }
-}

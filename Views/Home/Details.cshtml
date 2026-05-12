@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Ürün Detay";
-    var unit = GetUnit(Model);
-    var amountLabel = unit == "kg" ? "Kilo" : "Adet";
+    var unit = "kg";
 }
 
 <section class="fresh-panel">
@@ -15,7 +14,9 @@
     <div class="panel-body">
         <div class="detail-grid">
             <div class="detail-image-wrap">
-                <div class="detail-art">@GetIcon(Model)</div>
+                <div class="detail-art detail-photo">
+                    <img class="detail-image" src="@ProductImageHelper.GetImage(Model)" alt="@Model.Name" />
+                </div>
             </div>
 
             <div>
@@ -25,7 +26,7 @@
 
                 <div class="d-flex align-items-center gap-3">
                     <h2 class="h3 text-success mb-0">@Model.Price.ToString("0.00") TL / @unit</h2>
-                    <span class="mini-label">%15 indirim</span>
+                    <span class="mini-label">Taze ürün</span>
                 </div>
 
                 <div class="info-box">
@@ -44,9 +45,9 @@
                     <input id="quantityInput" type="hidden" name="quantity" value="1" />
 
                     <div class="mb-3">
-                        <span class="me-2 fw-bold">@amountLabel:</span>
+                        <span class="me-2 fw-bold">Kilo:</span>
                         <span class="qty-control">
-                            <button id="decreaseQuantity" class="btn btn-sm p-0" type="button">−</button>
+                            <button id="decreaseQuantity" class="btn btn-sm p-0" type="button">-</button>
                             <span id="quantityText">1</span>
                             <span>@unit</span>
                             <button id="increaseQuantity" class="btn btn-sm p-0" type="button">+</button>
@@ -84,26 +85,4 @@
             }
         });
     </script>
-}
-
-@functions {
-    string GetIcon(Product product)
-    {
-        if (product.Name.Contains("Elma", StringComparison.OrdinalIgnoreCase)) return "🍏";
-        if (product.Name.Contains("Domates", StringComparison.OrdinalIgnoreCase)) return "🍅";
-        if (product.Name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
-        if (product.Name.Contains("Ekmek", StringComparison.OrdinalIgnoreCase)) return "🍞";
-        return "🛒";
-    }
-
-    string GetUnit(Product product)
-    {
-        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
-            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return "kg";
-        }
-
-        return "adet";
-    }
 }

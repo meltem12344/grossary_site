@@ -15,7 +15,7 @@
     </div>
 
     <div class="panel-body">
-        <h1 class="h5 mb-3">Tüm Kategoriler</h1>
+        <h1 class="h5 mb-3">Meyve ve Sebze Kategorileri</h1>
         <table class="fresh-table">
             <thead>
                 <tr>
@@ -52,9 +52,8 @@
 @functions {
     string GetIcon(string name)
     {
-        if (name.Contains("Süt", StringComparison.OrdinalIgnoreCase)) return "🍼";
-        if (name.Contains("Atıştır", StringComparison.OrdinalIgnoreCase)) return "🍫";
-        if (name.Contains("Fırın", StringComparison.OrdinalIgnoreCase)) return "🍞";
+        if (name.Contains("Meyve", StringComparison.OrdinalIgnoreCase)) return "🍎";
+        if (name.Contains("Sebze", StringComparison.OrdinalIgnoreCase)) return "🥬";
         return "🥬";
     }
 }

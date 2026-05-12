@@ -21,6 +21,24 @@ public class ProfileController : Controller
             return RedirectToAction("Login", "Account");
         }
 
+        var user = _context.AppUsers.FirstOrDefault(x => x.Id == userId);
+
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        return View(user);
+    }
+
+    public IActionResult Orders()
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
         var user = _context.AppUsers
             .Include(x => x.Orders)
             .ThenInclude(x => x.OrderItems)

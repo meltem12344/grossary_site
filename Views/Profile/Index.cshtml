@@ -18,14 +18,14 @@
                 <strong>@Model.FullName</strong><br />
                 <span class="mini-label">@Model.Role</span>
                 <hr />
-                <a class="btn-soft d-block mb-2" href="#info">Kişisel Bilgiler</a>
-                <a class="btn-soft d-block mb-2" href="#orders">Siparişlerim</a>
+                <a class="btn-soft d-block mb-2" asp-action="Index">Kişisel Bilgiler</a>
+                <a class="btn-soft d-block mb-2" asp-action="Orders">Siparişlerim</a>
                 <a class="btn-soft d-block" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
             </aside>
 
             <div>
                 <form asp-action="Update" method="post">
-                    <h1 id="info" class="h5">Temel Kullanıcı Bilgileri</h1>
+                    <h1 class="h5">Temel Kullanıcı Bilgileri</h1>
 
                     <div class="row">
                         <div class="col mb-3">
@@ -62,36 +62,6 @@
 
                     <button type="submit" class="btn-fresh">Değişiklikleri Kaydet</button>
                 </form>
-
-                <h2 id="orders" class="h5 mt-4">Siparişlerim</h2>
-                @if (!Model.Orders.Any())
-                {
-                    <div class="alert alert-info">Henüz siparişiniz yok.</div>
-                }
-                else
-                {
-                    @foreach (var order in Model.Orders.OrderByDescending(x => x.OrderDate))
-                    {
-                        <div class="fresh-card mb-2">
-                            <div class="d-flex justify-content-between align-items-start gap-3">
-                                <div>
-                                    <strong>Sipariş #@order.Id</strong>
-                                    <div class="text-muted small">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</div>
-                                    <div class="small">@order.OrderItems.Count ürün</div>
-                                </div>
-
-                                <div class="text-end">
-                                    <strong>@order.TotalPrice.ToString("0.00") TL</strong><br />
-                                    <a class="btn-outline-fresh d-inline-block mt-2" asp-action="OrderDetails" asp-route-id="@order.Id">Detay</a>
-                                </div>
-                            </div>
-
-                            <div class="small text-muted mt-2">
-                                Teslimat: @(string.IsNullOrWhiteSpace(order.DeliveryAddress) ? Model.Address : order.DeliveryAddress)
-                            </div>
-                        </div>
-                    }
-                }
             </div>
         </div>
     </div>

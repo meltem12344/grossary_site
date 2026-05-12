@@ -2,11 +2,14 @@
 
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Ürünler";
+    ViewData["Title"] = "Ürün Yönetimi";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h5 mb-0">Ürün Yönetimi</h1>
+    <div>
+        <h1 class="h5 mb-1">Ürün Yönetimi</h1>
+        <p class="text-muted mb-0">Ürün ekleme, silme, güncelleme, fiyat ve stok işlemleri.</p>
+    </div>
     <a class="btn-fresh" asp-action="Create">+ Yeni Ürün</a>
 </div>
 
@@ -14,10 +17,10 @@
     <thead>
         <tr>
             <th>Ürün</th>
-            <th>Kategori</th>
+            <th>Tür</th>
             <th>Fiyat</th>
             <th>Stok</th>
-            <th>Durum</th>
+            <th>Açıklama</th>
             <th>İşlemler</th>
         </tr>
     </thead>
@@ -25,11 +28,16 @@
         @foreach (var product in Model)
         {
             <tr>
-                <td><strong>@product.Name</strong></td>
-                <td>@product.Category?.Name</td>
-                <td>@product.Price.ToString("0.00") TL / @GetUnit(product)</td>
-                <td>@product.Stock @GetUnit(product)</td>
-                <td><span class="mini-label">Aktif</span></td>
+                <td>
+                    <span class="cart-mini-art art-green">
+                        <img src="@ProductImageHelper.GetImage(product)" alt="@product.Name" />
+                    </span>
+                    <strong>@product.Name</strong>
+                </td>
+                <td><span class="mini-label">@product.Category?.Name</span></td>
+                <td><strong>@product.Price.ToString("0.00") TL / kg</strong></td>
+                <td>@product.Stock kg</td>
+                <td>@product.Description</td>
                 <td>
                     <a class="btn-soft" asp-action="Details" asp-route-id="@product.Id">Detay</a>
                     <a class="btn-outline-fresh" asp-action="Edit" asp-route-id="@product.Id">Düzenle</a>
@@ -39,16 +47,3 @@
         }
     </tbody>
 </table>
-
-@functions {
-    string GetUnit(Product product)
-    {
-        if (product.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
-            product.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
-        {
-            return "kg";
-        }
-
-        return "adet";
-    }
-}

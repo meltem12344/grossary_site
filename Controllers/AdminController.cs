@@ -21,9 +21,9 @@ public class AdminController : Controller
         }
 
         ViewBag.ProductCount = _context.Products.Count();
-        ViewBag.CategoryCount = _context.Categories.Count();
         ViewBag.OrderCount = _context.Orders.Count();
         ViewBag.UserCount = _context.AppUsers.Count();
+        ViewBag.TotalRevenue = _context.Orders.Sum(x => (decimal?)x.TotalPrice) ?? 0;
 
         var lastOrders = _context.Orders
             .Include(x => x.AppUser)

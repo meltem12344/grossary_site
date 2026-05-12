@@ -1,0 +1,12 @@
+bin/
+obj/
+.vs/
+
+GroceryStore.db
+GroceryStore.db-shm
+GroceryStore.db-wal
+
+*.log
+
+# Klasor icindeki eski/kopya proje, asil proje kok dizinde.
+grossary_site/

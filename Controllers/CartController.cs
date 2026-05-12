@@ -72,14 +72,15 @@ public class CartController : Controller
             quantity = 1;
         }
 
-        if (quantity > product.Stock)
-        {
-            TempData["Error"] = $"Stokta sadece {product.Stock} {GetUnit(product)} var.";
-            return RedirectToAction("Details", "Home", new { id = productId });
-        }
-
         var cartItem = _context.CartItems.FirstOrDefault(x =>
             x.AppUserId == userId && x.ProductId == productId);
+
+        var currentQuantity = cartItem?.Quantity ?? 0;
+        if (currentQuantity + quantity > product.Stock)
+        {
+            TempData["Error"] = $"Stokta sadece {product.Stock} {GetUnit(product)} var.";
+            return RedirectBack();
+        }
 
         if (cartItem == null)
         {
@@ -97,7 +98,7 @@ public class CartController : Controller
 
         _context.SaveChanges();
         TempData["Success"] = "Ürün sepete eklendi.";
-        return RedirectToAction("Index", "Cart");
+        return RedirectBack();
     }
 
     [HttpPost]
@@ -277,6 +278,17 @@ public class CartController : Controller
     private int? GetUserId()
     {
         return HttpContext.Session.GetInt32("UserId");
+    }
+
+    private IActionResult RedirectBack()
+    {
+        var returnUrl = Request.Headers.Referer.ToString();
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "Home");
     }
 
     private string GetUnit(Product? product)

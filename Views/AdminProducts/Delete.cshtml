@@ -10,10 +10,16 @@
         <a class="brand" asp-action="Index">← Ürünlere Dön</a>
         <strong>Ürün Sil</strong>
     </div>
+
     <div class="panel-body">
         <div class="form-box">
+            <div class="cart-mini-art art-green mb-3">
+                <img src="@ProductImageHelper.GetImage(Model)" alt="@Model.Name" />
+            </div>
             <h1 class="h5">Ürün Sil</h1>
             <p><strong>@Model.Name</strong> ürününü silmek istiyor musunuz?</p>
+            <p class="text-muted">Fiyat: @Model.Price.ToString("0.00") TL / kg, Stok: @Model.Stock kg</p>
+
             <form asp-action="DeleteConfirmed" method="post">
                 <input type="hidden" name="id" value="@Model.Id" />
                 <button type="submit" class="btn btn-danger">Evet, Sil</button>

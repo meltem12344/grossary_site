@@ -1,6 +1,7 @@
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var isLoggedIn = Context.Session.GetString("UserName") != null;
 }
 
 <!DOCTYPE html>
@@ -17,16 +18,15 @@
         <a class="brand" asp-controller="Home" asp-action="Index">🛒 FreshMart</a>
         <nav class="fresh-menu">
             <a class="@(currentController == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">Ürünler</a>
-            <a class="@(currentController == "Categories" ? "active" : "")" asp-controller="Categories" asp-action="Index">Kategoriler</a>
             <a class="@(currentController == "Cart" ? "active" : "")" asp-controller="Cart" asp-action="Index">Sepet</a>
             <a class="@(currentController == "Profile" ? "active" : "")" asp-controller="Profile" asp-action="Index">Profil</a>
 
-            @if (Context.Session.GetString("Role") == "Admin")
+            @if (isLoggedIn)
             {
-                <a asp-controller="Admin" asp-action="Index">Admin</a>
+                <a class="@(currentController == "Admin" || currentController == "AdminProducts" ? "active" : "")" asp-controller="Admin" asp-action="Index">Admin Panel</a>
             }
 
-            @if (Context.Session.GetString("UserName") == null)
+            @if (!isLoggedIn)
             {
                 <a class="cart-pill @(currentController == "Account" && currentAction == "Login" ? "active" : "")" asp-controller="Account" asp-action="Login">Giriş</a>
             }

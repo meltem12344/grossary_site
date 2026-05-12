@@ -1,21 +1,28 @@
 using DotnetTest.Data;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC yapısını aktif ediyoruz. Controller ve View dosyaları bu sayede çalışır.
+// MVC yapisini aktif ediyoruz. Controller ve View dosyalari bu sayede calisir.
 builder.Services.AddControllersWithViews();
 
-// Code First için DbContext'i projeye tanıtıyoruz.
-// Connection string appsettings.json içinden okunur.
+// Code First icin DbContext'i projeye tanitiyoruz.
+// Connection string appsettings.json icinden okunur.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Basit login işlemi için Session kullanıyoruz.
-// Bu proje ders projesi olduğu için ASP.NET Identity yerine daha anlaşılır bir yol seçildi.
+// Basit login islemi icin Session kullaniyoruz.
+// Bu proje ders projesi oldugu icin ASP.NET Identity yerine daha anlasilir bir yol secildi.
 builder.Services.AddSession();
 
 var app = builder.Build();
+
+// Fiyat alanlarinda 38,90 gibi Turkce ondalikli sayilarin kabul edilmesi icin.
+var turkishCulture = new CultureInfo("tr-TR");
+CultureInfo.DefaultThreadCurrentCulture = turkishCulture;
+CultureInfo.DefaultThreadCurrentUICulture = turkishCulture;
 
 if (!app.Environment.IsDevelopment())
 {
@@ -28,7 +35,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Session, UseRouting ile MapControllerRoute arasında olmalı.
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(turkishCulture),
+    SupportedCultures = new[] { turkishCulture },
+    SupportedUICultures = new[] { turkishCulture }
+});
+
+// Session, UseRouting ile MapControllerRoute arasinda olmali.
 app.UseSession();
 
 app.UseAuthorization();

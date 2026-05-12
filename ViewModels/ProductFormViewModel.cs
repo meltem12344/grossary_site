@@ -22,9 +22,9 @@ public class ProductFormViewModel
 
     public string ImageUrl { get; set; } = string.Empty;
 
-    [Range(1, int.MaxValue, ErrorMessage = "Kategori seçiniz.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Ürün türü seçiniz.")]
     public int CategoryId { get; set; }
 
-    // SelectListItem, dropdown için kullanılır.
+    // SelectListItem, ürün türü dropdown'ı için kullanılır.
     public List<SelectListItem> Categories { get; set; } = new();
 }
