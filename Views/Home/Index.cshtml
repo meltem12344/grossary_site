@@ -1,0 +1,102 @@
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    var cartText = "Sepet";
+    var searchText = ViewBag.SearchText as string;
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var fruits = Model.Where(x => x.Category?.Name == "Meyve").ToList();
+    var vegetables = Model.Where(x => x.Category?.Name == "Sebze").ToList();
+}
+
+<section class="fresh-panel">
+    <div class="panel-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h1 class="h3 mb-1">FreshMart Meyve Sebze</h1>
+                <p class="text-muted mb-0">Taze meyve ve sebzeleri seç, sepetine kilo ile ekle.</p>
+            </div>
+            <a class="btn-soft" asp-controller="Cart" asp-action="Index">@cartText</a>
+        </div>
+
+        <form class="search-row" method="get">
+            <input name="q" value="@searchText" placeholder="Meyve veya sebze ara..." />
+            <button class="btn-fresh" type="submit">Ara</button>
+        </form>
+
+        <div class="chip-row">
+            <a class="chip text-decoration-none" asp-action="Index">Tümü</a>
+            @foreach (var category in categories)
+            {
+                <a class="chip text-decoration-none" asp-action="Index" asp-route-q="@category.Name">@category.Name</a>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">Aramanıza uygun ürün bulunamadı.</div>
+        }
+
+        <div class="catalog-split">
+            @if (fruits.Any())
+            {
+                <section class="product-section">
+                    <div class="section-heading">
+                        <h2>Meyveler</h2>
+                        <span>@fruits.Count ürün</span>
+                    </div>
+                    <div class="product-grid">
+                        @foreach (var product in fruits)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
+                </section>
+            }
+
+            @if (vegetables.Any())
+            {
+                <section class="product-section">
+                    <div class="section-heading">
+                        <h2>Sebzeler</h2>
+                        <span>@vegetables.Count ürün</span>
+                    </div>
+                    <div class="product-grid">
+                        @foreach (var product in vegetables)
+                        {
+                            <partial name="_ProductCard" model="product" />
+                        }
+                    </div>
+                </section>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.product-add-form').forEach(function (form) {
+            const quantityInput = form.querySelector('.product-quantity');
+            const quantityText = form.querySelector('.qty-value');
+            const maxStock = parseInt(form.querySelector('.card-qty-control').dataset.max);
+
+            form.querySelector('.qty-plus').addEventListener('click', function () {
+                let value = parseInt(quantityInput.value);
+                if (value < maxStock) {
+                    value++;
+                    quantityInput.value = value;
+                    quantityText.textContent = value;
+                }
+            });
+
+            form.querySelector('.qty-minus').addEventListener('click', function () {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    value--;
+                    quantityInput.value = value;
+                    quantityText.textContent = value;
+                }
+            });
+        });
+    </script>
+}

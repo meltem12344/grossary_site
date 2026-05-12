@@ -1,0 +1,90 @@
+@model Order
+
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+    var deliveryName = string.IsNullOrWhiteSpace(Model.DeliveryFullName) ? Model.AppUser?.FullName : Model.DeliveryFullName;
+    var deliveryEmail = string.IsNullOrWhiteSpace(Model.DeliveryEmail) ? Model.AppUser?.Email : Model.DeliveryEmail;
+    var deliveryPhone = string.IsNullOrWhiteSpace(Model.DeliveryPhone) ? Model.AppUser?.Phone : Model.DeliveryPhone;
+    var deliveryAddress = string.IsNullOrWhiteSpace(Model.DeliveryAddress) ? Model.AppUser?.Address : Model.DeliveryAddress;
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Orders">← Siparişlerime Dön</a>
+        <strong>Sipariş #@Model.Id</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="cart-layout">
+            <div>
+                <div class="form-box mb-3">
+                    <h1 class="h5 mb-3">Teslimat Bilgileri</h1>
+                    <p class="mb-1"><strong>Ad Soyad:</strong> @deliveryName</p>
+                    <p class="mb-1"><strong>E-posta:</strong> @deliveryEmail</p>
+                    <p class="mb-1"><strong>Telefon:</strong> @deliveryPhone</p>
+                    <p class="mb-0"><strong>Adres:</strong> @deliveryAddress</p>
+                </div>
+
+                <div class="form-box">
+                    <h2 class="h5 mb-3">Ürünler</h2>
+                    <table class="fresh-table">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Kilo / Adet</th>
+                                <th>Birim Fiyat</th>
+                                <th>Tutar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                var unit = GetUnit(item.Product);
+                                var lineTotal = item.Price * item.Quantity;
+                                <tr>
+                                    <td>@item.Product?.Name</td>
+                                    <td>@item.Quantity @unit</td>
+                                    <td>@item.Price.ToString("0.00") TL / @unit</td>
+                                    <td>@lineTotal.ToString("0.00") TL</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <aside class="summary-box">
+                <h2 class="h5">Sipariş Özeti</h2>
+                <div class="summary-line">
+                    <span>Tarih</span>
+                    <strong>@Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Ürün sayısı</span>
+                    <strong>@Model.OrderItems.Count</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Teslimat</span>
+                    <strong>Ücretsiz</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Toplam</span>
+                    <strong>@Model.TotalPrice.ToString("0.00") TL</strong>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@functions {
+    string GetUnit(Product? product)
+    {
+        if (product?.Category?.Name.Contains("Meyve", StringComparison.OrdinalIgnoreCase) == true ||
+            product?.Category?.Name.Contains("Sebze", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return "kg";
+        }
+
+        return "adet";
+    }
+}

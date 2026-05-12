@@ -1,0 +1,70 @@
+@model List<Order>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h5 mb-1">Admin Panel</h1>
+        <p class="text-muted mb-0">Ürün, fiyat, stok ve sipariş yönetimi.</p>
+    </div>
+    <a class="btn-fresh" asp-controller="AdminProducts" asp-action="Create">+ Ürün Ekle</a>
+</div>
+
+<div class="stat-grid mb-4">
+    <div class="stat-box">
+        <span>Toplam Ürün</span>
+        <strong>@ViewBag.ProductCount</strong>
+    </div>
+    <div class="stat-box blue">
+        <span>Toplam Sipariş</span>
+        <strong>@ViewBag.OrderCount</strong>
+    </div>
+    <div class="stat-box orange">
+        <span>Toplam Gelir</span>
+        <strong>@(((decimal)ViewBag.TotalRevenue).ToString("0.00")) TL</strong>
+    </div>
+    <div class="stat-box pink">
+        <span>Kayıtlı Üye</span>
+        <strong>@ViewBag.UserCount</strong>
+    </div>
+</div>
+
+<div class="d-flex gap-2 mb-4">
+    <a class="btn-soft" asp-controller="AdminProducts" asp-action="Index">Ürünleri Yönet</a>
+    <a class="btn-outline-fresh" asp-controller="Admin" asp-action="Orders">Siparişleri Gör</a>
+</div>
+
+<h2 class="h6">Son Siparişler</h2>
+<table class="fresh-table">
+    <thead>
+        <tr>
+            <th>Müşteri</th>
+            <th>Tarih</th>
+            <th>Tutar</th>
+            <th>Durum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4">Henüz sipariş yok.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.AppUser?.FullName</td>
+                    <td>@order.OrderDate.ToString("dd.MM.yyyy")</td>
+                    <td>@order.TotalPrice.ToString("0.00") TL</td>
+                    <td><span class="mini-label">Teslim</span></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

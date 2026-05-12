@@ -1,0 +1,151 @@
+@model ProductFormViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Ürün Düzenle";
+}
+
+<div class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Ürünlere Dön</a>
+        <strong>Ürün Düzenle</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="edit-toolbar">
+            <div>
+                <strong>Düzenleniyor: @Model.Name</strong>
+                <span class="text-muted">(ID: @Model.Id)</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span id="autosaveStatus" class="save-status">Değişiklik yapınca otomatik kaydeder</span>
+                <button form="editProductForm" type="submit" class="btn-fresh">Kaydet</button>
+            </div>
+        </div>
+
+        <form id="editProductForm" asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="detail-grid">
+                <div>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Ürün Adı</label>
+                        <input asp-for="Name" class="form-control autosave-field" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label">Ürün Türü</label>
+                        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select autosave-field">
+                            <option value="0">Meyve veya sebze seçin</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label asp-for="Price" class="form-label">Fiyat (TL / kg)</label>
+                            <input asp-for="Price" class="form-control autosave-field" inputmode="decimal" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                            <small class="text-muted">Örnek: 38,90</small>
+                        </div>
+                        <div class="col mb-3">
+                            <label asp-for="Stock" class="form-label">Stok (kg)</label>
+                            <input asp-for="Stock" class="form-control autosave-field" />
+                            <span asp-validation-for="Stock" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Açıklama</label>
+                        <textarea asp-for="Description" class="form-control autosave-field" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                    <div class="detail-art detail-photo mb-2">
+                        <img id="imagePreview" class="detail-image" src="@ProductImageHelper.GetImage(Model.Name, Model.ImageUrl)" alt="@Model.Name" />
+                    </div>
+                    <input asp-for="ImageUrl" class="form-control mb-3 autosave-field" placeholder="İsteğe bağlı görsel URL" />
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-danger flex-fill" asp-action="Delete" asp-route-id="@Model.Id">Ürünü Sil</a>
+                        <button type="submit" class="btn-fresh flex-fill">Güncelle</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        if (window.jQuery && $.validator) {
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) || /^-?\d+([,.]\d+)?$/.test(value);
+            };
+        }
+
+        const editForm = document.getElementById('editProductForm');
+        const saveStatus = document.getElementById('autosaveStatus');
+        const imageInput = document.getElementById('ImageUrl');
+        const imagePreview = document.getElementById('imagePreview');
+        let saveTimer;
+
+        function setStatus(text, className) {
+            saveStatus.textContent = text;
+            saveStatus.className = 'save-status ' + className;
+        }
+
+        function updatePreview() {
+            const url = imageInput.value.trim();
+            if (url.length > 0) {
+                imagePreview.src = url;
+            }
+        }
+
+        function autoSaveProduct() {
+            if (window.jQuery && !$(editForm).valid()) {
+                setStatus('Eksik bilgi var', 'error');
+                return;
+            }
+
+            setStatus('Kaydediliyor...', 'saving');
+
+            fetch('@Url.Action("AutoSave", "AdminProducts")', {
+                method: 'POST',
+                body: new FormData(editForm)
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Kaydedilemedi');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    setStatus(data.message + ' ' + data.savedAt, 'saved');
+                })
+                .catch(function () {
+                    setStatus('Kaydedilemedi', 'error');
+                });
+        }
+
+        document.querySelectorAll('.autosave-field').forEach(function (field) {
+            field.addEventListener('input', function () {
+                clearTimeout(saveTimer);
+                updatePreview();
+                setStatus('Değişiklik var', 'saving');
+                saveTimer = setTimeout(autoSaveProduct, 900);
+            });
+
+            field.addEventListener('change', function () {
+                clearTimeout(saveTimer);
+                updatePreview();
+                autoSaveProduct();
+            });
+        });
+    </script>
+}

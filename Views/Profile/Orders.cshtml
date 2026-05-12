@@ -1,0 +1,60 @@
+@model AppUser
+
+@{
+    ViewData["Title"] = "Siparişlerim";
+    var initials = string.Join("", Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]));
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-controller="Home" asp-action="Index">FreshMart</a>
+        <strong>Siparişlerim</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="profile-grid">
+            <aside class="summary-box text-center">
+                <div class="profile-avatar">@initials</div>
+                <strong>@Model.FullName</strong><br />
+                <span class="mini-label">@Model.Role</span>
+                <hr />
+                <a class="btn-soft d-block mb-2" asp-action="Index">Kişisel Bilgiler</a>
+                <a class="btn-soft d-block mb-2" asp-action="Orders">Siparişlerim</a>
+                <a class="btn-soft d-block" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+            </aside>
+
+            <div>
+                <h1 class="h5 mb-3">Siparişlerim</h1>
+
+                @if (!Model.Orders.Any())
+                {
+                    <div class="alert alert-info">Henüz siparişiniz yok.</div>
+                }
+                else
+                {
+                    @foreach (var order in Model.Orders.OrderByDescending(x => x.OrderDate))
+                    {
+                        <div class="fresh-card mb-2">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <strong>Sipariş #@order.Id</strong>
+                                    <div class="text-muted small">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</div>
+                                    <div class="small">@order.OrderItems.Count ürün</div>
+                                </div>
+
+                                <div class="text-end">
+                                    <strong>@order.TotalPrice.ToString("0.00") TL</strong><br />
+                                    <a class="btn-outline-fresh d-inline-block mt-2" asp-action="OrderDetails" asp-route-id="@order.Id">Detay</a>
+                                </div>
+                            </div>
+
+                            <div class="small text-muted mt-2">
+                                Teslimat: @(string.IsNullOrWhiteSpace(order.DeliveryAddress) ? Model.Address : order.DeliveryAddress)
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

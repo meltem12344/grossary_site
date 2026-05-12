@@ -1,0 +1,35 @@
+@model Product
+
+<article class="fresh-card">
+    <div class="product-art @GetArtClass(Model)">
+        <img class="product-image" src="@ProductImageHelper.GetImage(Model)" alt="@Model.Name" />
+    </div>
+
+    <span class="mini-label">@Model.Category?.Name</span>
+    <div class="product-title">@Model.Name</div>
+    <div class="small text-muted">@Model.Price.ToString("0.00") TL / kg</div>
+
+    <div class="d-grid gap-2 mt-3">
+        <a class="btn-outline-fresh text-center" asp-action="Details" asp-route-id="@Model.Id">Detay</a>
+
+        <form class="product-add-form" asp-controller="Cart" asp-action="Add" method="post">
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <input class="product-quantity" type="hidden" name="quantity" value="1" />
+
+            <button type="submit" class="btn-soft w-100">+ Sepete Ekle</button>
+
+            <div class="card-qty-control" data-max="@Model.Stock">
+                <button class="qty-minus" type="button">-</button>
+                <span><strong class="qty-value">1</strong> kg</span>
+                <button class="qty-plus" type="button">+</button>
+            </div>
+        </form>
+    </div>
+</article>
+
+@functions {
+    string GetArtClass(Product product)
+    {
+        return product.Category?.Name == "Sebze" ? "art-green" : "art-orange";
+    }
+}

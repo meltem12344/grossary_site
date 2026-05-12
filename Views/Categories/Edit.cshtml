@@ -1,0 +1,30 @@
+@model CategoryViewModel
+
+@{
+    Layout = Context.Session.GetString("Role") == "Admin" ? "_AdminLayout" : "_UserLayout";
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Kategorilere Dön</a>
+        <strong>Kategori Düzenle</strong>
+    </div>
+    <div class="panel-body">
+        <form asp-action="Edit" method="post" class="form-box">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Kategori Adı</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-fresh">Güncelle</button>
+            <a class="btn-outline-fresh" asp-action="Index">İptal</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

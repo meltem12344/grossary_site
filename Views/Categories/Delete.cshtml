@@ -1,0 +1,24 @@
+@model Category
+
+@{
+    Layout = Context.Session.GetString("Role") == "Admin" ? "_AdminLayout" : "_UserLayout";
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Kategorilere Dön</a>
+        <strong>Kategori Sil</strong>
+    </div>
+    <div class="panel-body">
+        <div class="form-box">
+            <h1 class="h5">Kategori Sil</h1>
+            <p><strong>@Model.Name</strong> kategorisini silmek istiyor musunuz?</p>
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">Evet, Sil</button>
+                <a class="btn-outline-fresh" asp-action="Index">Vazgeç</a>
+            </form>
+        </div>
+    </div>
+</section>

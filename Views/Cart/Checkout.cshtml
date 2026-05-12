@@ -1,0 +1,102 @@
+@model CartViewModel
+
+@{
+    ViewData["Title"] = "Sipariş Tamamla";
+    var user = ViewBag.User as AppUser;
+    var fullNameJson = System.Text.Json.JsonSerializer.Serialize(user?.FullName ?? "");
+    var emailJson = System.Text.Json.JsonSerializer.Serialize(user?.Email ?? "");
+    var phoneJson = System.Text.Json.JsonSerializer.Serialize(user?.Phone ?? "");
+    var addressJson = System.Text.Json.JsonSerializer.Serialize(user?.Address ?? "");
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-controller="Home" asp-action="Index">FreshMart</a>
+        <strong>Siparişi Tamamla</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="cart-layout">
+            <div class="form-box">
+                <h1 class="h5 mb-3">Teslimat Bilgileri</h1>
+
+                <div class="mb-2">
+                    <label class="form-label">Ad Soyad</label>
+                    <input id="deliveryFullName" name="deliveryFullName" form="checkoutForm" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">E-posta</label>
+                    <input id="deliveryEmail" name="deliveryEmail" form="checkoutForm" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Telefon</label>
+                    <input id="deliveryPhone" name="deliveryPhone" form="checkoutForm" class="form-control" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Adres</label>
+                    <textarea id="deliveryAddress" name="deliveryAddress" form="checkoutForm" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <button id="fillProfileInfo" class="btn-soft" type="button">Bilgilerimi Getir</button>
+                    <a class="btn-outline-fresh" asp-controller="Profile" asp-action="Index">Bilgileri Düzenle</a>
+                </div>
+            </div>
+
+            <aside class="summary-box">
+                <h2 class="h5">Sipariş İçeriği</h2>
+                @foreach (var item in Model.Items)
+                {
+                    <div class="summary-line">
+                        <span>@item.ProductName x @item.Quantity @item.Unit</span>
+                        <strong>@item.LineTotal.ToString("0.00") TL</strong>
+                    </div>
+                }
+
+                <div class="summary-line">
+                    <span>Ara toplam</span>
+                    <strong>@Model.TotalPrice.ToString("0.00") TL</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Teslimat</span>
+                    <strong>Ücretsiz</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Toplam</span>
+                    <strong>@Model.TotalPrice.ToString("0.00") TL</strong>
+                </div>
+
+                <h3 class="h6 mt-3">Ödeme Yöntemi</h3>
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn-soft flex-fill" type="button">Kredi Kartı</button>
+                    <button class="btn-outline-fresh flex-fill" type="button">Kapıda Ödeme</button>
+                </div>
+
+                <form id="checkoutForm" asp-action="CheckoutConfirm" method="post">
+                    <button type="submit" class="btn-fresh w-100">Siparişi Tamamla</button>
+                </form>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const profileInfo = {
+            fullName: @Html.Raw(fullNameJson),
+            email: @Html.Raw(emailJson),
+            phone: @Html.Raw(phoneJson),
+            address: @Html.Raw(addressJson)
+        };
+
+        document.getElementById('fillProfileInfo').addEventListener('click', function () {
+            document.getElementById('deliveryFullName').value = profileInfo.fullName;
+            document.getElementById('deliveryEmail').value = profileInfo.email;
+            document.getElementById('deliveryPhone').value = profileInfo.phone;
+            document.getElementById('deliveryAddress').value = profileInfo.address;
+        });
+    </script>
+}

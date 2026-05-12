@@ -1,0 +1,32 @@
+@model Product
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Ürün Detay";
+}
+
+<div class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-action="Index">← Ürünlere Dön</a>
+        <strong>Ürün Detay</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="detail-grid">
+            <div class="detail-art detail-photo">
+                <img class="detail-image" src="@ProductImageHelper.GetImage(Model)" alt="@Model.Name" />
+            </div>
+            <div>
+                <span class="mini-label">@Model.Category?.Name</span>
+                <h1 class="h3 mt-2">@Model.Name</h1>
+                <p>@Model.Description</p>
+                <p><strong>Fiyat:</strong> @Model.Price.ToString("0.00") TL / kg</p>
+                <p><strong>Stok:</strong> @Model.Stock kg</p>
+                <div class="d-flex gap-2">
+                    <a class="btn-fresh" asp-action="Edit" asp-route-id="@Model.Id">Düzenle</a>
+                    <a class="btn-outline-fresh" asp-action="Index">Geri Dön</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

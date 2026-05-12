@@ -1,0 +1,68 @@
+@model AppUser
+
+@{
+    ViewData["Title"] = "Profil";
+    var initials = string.Join("", Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]));
+}
+
+<section class="fresh-panel">
+    <div class="fresh-topbar">
+        <a class="brand" asp-controller="Home" asp-action="Index">FreshMart</a>
+        <strong>@Model.FullName</strong>
+    </div>
+
+    <div class="panel-body">
+        <div class="profile-grid">
+            <aside class="summary-box text-center">
+                <div class="profile-avatar">@initials</div>
+                <strong>@Model.FullName</strong><br />
+                <span class="mini-label">@Model.Role</span>
+                <hr />
+                <a class="btn-soft d-block mb-2" asp-action="Index">Kişisel Bilgiler</a>
+                <a class="btn-soft d-block mb-2" asp-action="Orders">Siparişlerim</a>
+                <a class="btn-soft d-block" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+            </aside>
+
+            <div>
+                <form asp-action="Update" method="post">
+                    <h1 class="h5">Temel Kullanıcı Bilgileri</h1>
+
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Ad Soyad</label>
+                            <input name="fullName" class="form-control" value="@Model.FullName" />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">E-posta</label>
+                            <input name="email" type="email" class="form-control" value="@Model.Email" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Telefon</label>
+                        <input name="phone" class="form-control" value="@Model.Phone" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Adres</label>
+                        <textarea name="address" class="form-control" rows="3">@Model.Address</textarea>
+                    </div>
+
+                    <h2 class="h5 mt-4">Şifre Değiştir</h2>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Mevcut Şifre</label>
+                            <input class="form-control" type="password" value="@Model.Password" readonly />
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label">Yeni Şifre</label>
+                            <input name="newPassword" class="form-control" type="password" placeholder="Boş bırakırsanız değişmez" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-fresh">Değişiklikleri Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
